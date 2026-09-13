@@ -1,0 +1,6 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:startColor="@color/brand_red"
+        android:endColor="@color/shop_header_red"
+        android:angle="0"/>
+</shape>

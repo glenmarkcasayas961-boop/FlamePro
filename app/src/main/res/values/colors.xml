@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="brand_red">#E50914</color>
+    <color name="brand_subtitle_red">#FF1E1E</color>
+    <color name="input_text_color">#212121</color>
+    <color name="hint_color">#9E9E9E</color>
+    <color name="divider_gray">#BDBDBD</color>
+    <color name="footer_text_color">#757575</color>
+    <color name="login_button_tint">#E50914</color>
+    <color name="banner_blue">#0D47A1</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="text_gray">#757575</color>
+    <color name="shop_header_red">#D32F2F</color>
+    <color name="category_bg_light">#F5F5F5</color>
+    <color name="rating_gold">#FFD700</color>
+    <color name="favorite_heart_gray">#BDBDBD</color>
+</resources>

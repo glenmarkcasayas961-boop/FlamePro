@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">32dp</dimen>
+    <dimen name="header_top_margin">24dp</dimen>
+    <dimen name="banner_top_margin">32dp</dimen>
+    <dimen name="stats_top_margin">0dp</dimen>
+    <dimen name="section_top_margin">32dp</dimen>
+    <dimen name="text_size_welcome">22sp</dimen>
+    <dimen name="text_size_user_name">28sp</dimen>
+    <dimen name="text_size_section_title">24sp</dimen>
+    <dimen name="branch_title_bottom_margin">16dp</dimen>
+</resources>

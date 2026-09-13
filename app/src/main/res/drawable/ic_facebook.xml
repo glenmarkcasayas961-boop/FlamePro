@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- The Circular Background (Facebook Blue) -->
+    <path
+        android:fillColor="#1877F2"
+        android:pathData="M12,0C5.37,0 0,5.37 0,12s5.37,12 12,12s12,-5.37 12,-12S18.63,0 12,0z"/>
+
+    <!-- The "f" Logo (White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15.5,12h-2.5v9h-3.5v-9h-2v-3h2v-2c0,-2.5 1.5,-4 4,-4c1.2,0 2.2,0.1 2.5,0.1v2.9h-1.7c-1.2,0 -1.5,0.6 -1.5,1.4v1.6h3.2L15.5,12z"/>
+</vector>
