@@ -102,4 +102,5 @@
     <string name="item_count_plural">%d items</string>
     <string name="promo_more">Add ₱ %.2f more for FREE delivery!</string>
     <string name="promo_qualified">You have qualified for FREE delivery!</string>
+    <string name="service_name">Service Name</string>
 </resources>
