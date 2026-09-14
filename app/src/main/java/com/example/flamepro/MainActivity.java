@@ -2,6 +2,7 @@ package com.example.flamepro;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +15,14 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigationrail.NavigationRailView;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigation;
     private NavigationRailView navigationRail;
+    private View cartNotificationBar;
+    private TextView tvTotalPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         initializeViews();
         setupNavigation();
+        setupCartNotificationBar();
 
         // Load default fragment
         if (savedInstanceState == null) {
@@ -44,6 +50,26 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         bottomNavigation = findViewById(R.id.bottomNavigation);
         navigationRail = findViewById(R.id.navigationRail);
+        cartNotificationBar = findViewById(R.id.cartNotificationBar);
+        tvTotalPrice = findViewById(R.id.tvTotalPrice);
+    }
+
+    private void setupCartNotificationBar() {
+        if (cartNotificationBar == null) return;
+
+        CartManager.getInstance().addListener(totalItems -> {
+            updateCartNotificationVisibility();
+            if (tvTotalPrice != null) {
+                tvTotalPrice.setText(String.format(Locale.getDefault(), "₱ %.2f", CartManager.getInstance().getTotalPrice()));
+            }
+        });
+
+        findViewById(R.id.btnCheckout).setOnClickListener(v -> loadFragment(new CartFragment()));
+    }
+
+    private void updateCartNotificationVisibility() {
+        if (cartNotificationBar == null) return;
+        cartNotificationBar.setVisibility(View.GONE);
     }
 
     private void setupNavigation() {
@@ -65,17 +91,19 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
+            Fragment fragment = null;
             if (itemId == R.id.nav_home) {
-                loadFragment(new DashboardFragment());
-                return true;
+                fragment = new DashboardFragment();
             } else if (itemId == R.id.nav_shop) {
-                loadFragment(new ShopFragment());
-                return true;
+                fragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {
-                loadFragment(new CartFragment());
+                fragment = new CartFragment();
+            }
+            
+            if (fragment != null) {
+                loadFragment(fragment);
                 return true;
             }
-            // Add other fragment switches here
             return false;
         });
     }
@@ -91,14 +119,17 @@ public class MainActivity extends AppCompatActivity {
 
         navigationRail.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
+            Fragment fragment = null;
             if (itemId == R.id.nav_home) {
-                loadFragment(new DashboardFragment());
-                return true;
+                fragment = new DashboardFragment();
             } else if (itemId == R.id.nav_shop) {
-                loadFragment(new ShopFragment());
-                return true;
+                fragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {
-                loadFragment(new CartFragment());
+                fragment = new CartFragment();
+            }
+            
+            if (fragment != null) {
+                loadFragment(fragment);
                 return true;
             }
             return false;
@@ -110,5 +141,18 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.nav_host_fragment, fragment)
                 .commit();
+        
+        // Use post to ensure the fragment transaction is completed before checking visibility
+        getWindow().getDecorView().post(this::updateCartNotificationVisibility);
+    }
+
+    public void setBottomNavigationVisibility(int visibility) {
+        if (bottomNavigation != null) {
+            bottomNavigation.setVisibility(visibility);
+        }
+        View navDivider = findViewById(R.id.navDivider);
+        if (navDivider != null) {
+            navDivider.setVisibility(visibility);
+        }
     }
 }

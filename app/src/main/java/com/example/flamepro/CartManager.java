@@ -64,7 +64,9 @@ public class CartManager {
     public int getTotalItems() {
         int total = 0;
         for (CartItem item : cartItems) {
-            total += item.getQuantity();
+            if (item.isSelected()) {
+                total += item.getQuantity();
+            }
         }
         return total;
     }
@@ -72,6 +74,8 @@ public class CartManager {
     public double getTotalPrice() {
         double total = 0;
         for (CartItem item : cartItems) {
+            if (!item.isSelected()) continue;
+            
             String priceStr = item.getProduct().getPrice();
             if (priceStr == null) continue;
             

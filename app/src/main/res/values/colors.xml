@@ -16,4 +16,5 @@
     <color name="category_bg_light">#F5F5F5</color>
     <color name="rating_gold">#FFD700</color>
     <color name="favorite_heart_gray">#BDBDBD</color>
+    <color name="brand_blue_primary">#3F51B5</color>
 </resources>

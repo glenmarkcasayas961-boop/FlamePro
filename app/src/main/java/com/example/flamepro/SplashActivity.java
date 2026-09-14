@@ -19,13 +19,10 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         // Delay for 2.5 seconds (2500 ms) before opening MainActivity
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish(); // Removes SplashActivity from the back stack
-            }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // Removes SplashActivity from the back stack
         }, 2500);
     }
 }

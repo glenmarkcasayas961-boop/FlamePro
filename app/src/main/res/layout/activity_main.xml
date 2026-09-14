@@ -13,7 +13,62 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+        app:layout_constraintBottom_toTopOf="@id/navDivider" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cartNotificationBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:visibility="gone"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:id="@+id/tvCartLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shopping Cart"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/tvTotalPrice"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="₱ 0.00"
+                android:textColor="@color/brand_red"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCartLabel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCheckout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/brand_red"
+                android:text="Check out"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
     <View
         android:id="@+id/navDivider"

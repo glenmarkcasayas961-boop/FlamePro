@@ -4,16 +4,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class ExtinguisherAdapter extends RecyclerView.Adapter<ExtinguisherAdapter.ViewHolder> {
 
-    private final List<Integer> items;
+    private List<Product> products;
+    private OnProductClickListener listener;
 
-    public ExtinguisherAdapter(List<Integer> items) {
-        this.items = items;
+    public interface OnProductClickListener {
+        void onProductClick(Product product);
+    }
+
+    public ExtinguisherAdapter(List<Product> products, OnProductClickListener listener) {
+        this.products = products;
+        this.listener = listener;
     }
 
     @NonNull
@@ -25,20 +32,30 @@ public class ExtinguisherAdapter extends RecyclerView.Adapter<ExtinguisherAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.ivExtinguisher.setImageResource(items.get(position));
+        Product product = products.get(position);
+        holder.ivExtinguisher.setImageResource(product.getImageResource());
+        holder.tvName.setText(product.getName());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onProductClick(product);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return products.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivExtinguisher;
+        TextView tvName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivExtinguisher = itemView.findViewById(R.id.ivExtinguisher);
+            tvName = itemView.findViewById(R.id.tvExtinguisherName);
         }
     }
 }

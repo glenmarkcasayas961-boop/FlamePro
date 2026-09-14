@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import java.util.List;
@@ -41,6 +42,22 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
+        
+        // Handle horizontal orientation by setting a fixed width
+        if (parent instanceof RecyclerView) {
+            RecyclerView.LayoutManager lm = ((RecyclerView) parent).getLayoutManager();
+            if (lm instanceof LinearLayoutManager &&
+                ((LinearLayoutManager) lm).getOrientation() == RecyclerView.HORIZONTAL) {
+                ViewGroup.LayoutParams lp = view.getLayoutParams();
+                lp.width = (int) (180 * parent.getContext().getResources().getDisplayMetrics().density);
+                view.setLayoutParams(lp);
+            } else {
+                ViewGroup.LayoutParams lp = view.getLayoutParams();
+                lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                view.setLayoutParams(lp);
+            }
+        }
+        
         return new ViewHolder(view);
     }
 

@@ -6,18 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
+import androidx.fragment.app.Fragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -26,13 +22,21 @@ public class ProductDetailsFragment extends Fragment {
 
     private Product product;
     private int quantity = 1;
-    private View flAnimOverlay;
-    private ImageView ivAnimCart;
 
     public static ProductDetailsFragment newInstance(Product product) {
         ProductDetailsFragment fragment = new ProductDetailsFragment();
-        fragment.product = product;
+        Bundle args = new Bundle();
+        args.putSerializable("product", product);
+        fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            product = (Product) getArguments().getSerializable("product");
+        }
     }
 
     @Nullable
@@ -45,56 +49,23 @@ public class ProductDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavigationVisibility(View.GONE);
+        }
+
         if (product == null) return;
 
         setupUI(view);
         setupQuantityPicker(view);
         setupCarousel(view);
-        setupAnimations(view);
     }
 
-    private void setupAnimations(View view) {
-        flAnimOverlay = view.findViewById(R.id.flAnimOverlay);
-        ivAnimCart = view.findViewById(R.id.ivAnimCart);
-    }
-
-    private void playAddToCartAnimation(View anchorView) {
-        if (flAnimOverlay == null || ivAnimCart == null) return;
-
-        int[] location = new int[2];
-        anchorView.getLocationInWindow(location);
-        
-        ivAnimCart.setX(location[0] + (anchorView.getWidth() / 2f) - (ivAnimCart.getWidth() / 2f));
-        ivAnimCart.setY(location[1] - (ivAnimCart.getHeight() / 2f));
-
-        flAnimOverlay.setVisibility(View.VISIBLE);
-        ivAnimCart.setAlpha(1.0f);
-        ivAnimCart.setScaleX(0.5f);
-        ivAnimCart.setScaleY(0.5f);
-
-        AnimationSet animationSet = new AnimationSet(true);
-        animationSet.setInterpolator(new AccelerateInterpolator());
-
-        ScaleAnimation scale = new ScaleAnimation(0.5f, 1.5f, 0.5f, 1.5f, 
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(500);
-
-        AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
-        fadeOut.setStartOffset(300);
-        fadeOut.setDuration(200);
-
-        animationSet.addAnimation(scale);
-        animationSet.addAnimation(fadeOut);
-
-        animationSet.setAnimationListener(new Animation.AnimationListener() {
-            @Override public void onAnimationStart(Animation animation) {}
-            @Override public void onAnimationEnd(Animation animation) {
-                flAnimOverlay.setVisibility(View.GONE);
-            }
-            @Override public void onAnimationRepeat(Animation animation) {}
-        });
-
-        ivAnimCart.startAnimation(animationSet);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavigationVisibility(View.VISIBLE);
+        }
     }
 
     private void setupUI(View view) {
@@ -106,9 +77,12 @@ public class ProductDetailsFragment extends Fragment {
         TextView tvWeight = view.findViewById(R.id.tvWeight);
         TextView tvType = view.findViewById(R.id.tvType);
         TextView tvCoverage = view.findViewById(R.id.tvCoverage);
+        TextView tvRatingScore = view.findViewById(R.id.tvRatingScore);
+        TextView tvReviewCount = view.findViewById(R.id.tvReviewCount);
+        TextView tvStockStatus = view.findViewById(R.id.tvStockStatus);
         ImageView ivBack = view.findViewById(R.id.ivBack);
-        MaterialButton btnAddToCart = view.findViewById(R.id.btnAddToCart);
         MaterialButton btnBuyNow = view.findViewById(R.id.btnBuyNow);
+        MaterialButton btnAddToCart = view.findViewById(R.id.btnAddToCart);
 
         tvTitle.setText(product.getName());
         tvCategory.setText(product.getCategoryTag());
@@ -121,22 +95,37 @@ public class ProductDetailsFragment extends Fragment {
         tvType.setText(product.getType());
         tvCoverage.setText(product.getCoverage());
 
+        tvRatingScore.setText(String.valueOf(product.getRating()));
+        tvReviewCount.setText("(" + product.getReviews() + " Reviews)");
+        
+        if (product.isInStock()) {
+            tvStockStatus.setText(R.string.in_stock);
+        } else {
+            tvStockStatus.setText(R.string.out_of_stock);
+        }
+        tvStockStatus.setVisibility(View.VISIBLE);
+
         setupFeaturesList(view);
 
-        ivBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        ivBack.setOnClickListener(v -> {
+            if (getParentFragmentManager() != null) {
+                getParentFragmentManager().popBackStack();
+            }
+        });
 
         btnAddToCart.setOnClickListener(v -> {
             CartManager.getInstance().addProduct(product, quantity);
-            playAddToCartAnimation(v);
-            Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+            performCartAnimation(view.findViewById(R.id.flCartAnim));
         });
 
         btnBuyNow.setOnClickListener(v -> {
             CartManager.getInstance().addProduct(product, quantity);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.nav_host_fragment, new CartFragment())
-                    .addToBackStack(null)
-                    .commit();
+            if (getParentFragmentManager() != null) {
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_fragment, new CartFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
         });
     }
 
@@ -180,5 +169,31 @@ public class ProductDetailsFragment extends Fragment {
         vpCarousel.setAdapter(adapter);
 
         new TabLayoutMediator(tlDots, vpCarousel, (tab, position) -> {}).attach();
+    }
+
+    private void performCartAnimation(View animView) {
+        if (animView == null) return;
+        
+        animView.setVisibility(View.VISIBLE);
+        animView.setScaleX(0f);
+        animView.setScaleY(0f);
+        animView.setAlpha(1f);
+
+        animView.animate()
+                .scaleX(1.2f)
+                .scaleY(1.2f)
+                .setDuration(400)
+                .setInterpolator(new OvershootInterpolator())
+                .withEndAction(() -> {
+                    animView.animate()
+                            .scaleX(1.8f)
+                            .scaleY(1.8f)
+                            .alpha(0f)
+                            .setDuration(500)
+                            .setInterpolator(new AccelerateInterpolator())
+                            .withEndAction(() -> animView.setVisibility(View.GONE))
+                            .start();
+                })
+                .start();
     }
 }

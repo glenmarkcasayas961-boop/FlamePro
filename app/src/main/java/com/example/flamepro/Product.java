@@ -1,8 +1,9 @@
 package com.example.flamepro;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Product {
+public class Product implements Serializable {
     private String name;
     private String price;
     private String originalPrice;
