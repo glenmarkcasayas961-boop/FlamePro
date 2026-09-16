@@ -41,10 +41,10 @@
         android:id="@+id/notificationLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/cartIconLayout"
-        app:layout_constraintEnd_toStartOf="@id/cartIconLayout"
-        app:layout_constraintTop_toTopOf="@id/cartIconLayout">
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/tvShopSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvShopTitle">
 
         <ImageView
             android:layout_width="32dp"
@@ -67,42 +67,6 @@
             android:text="1"
             android:textColor="@color/brand_red"
             android:textSize="9sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cartIconLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvShopSubtitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvShopTitle">
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:contentDescription="@string/cart"
-            android:src="@drawable/nav_cart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white" />
-
-        <TextView
-            android:id="@+id/tvCartBadge"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:background="@drawable/badge_circle"
-            android:backgroundTint="@color/white"
-            android:gravity="center"
-            android:text="0"
-            android:textColor="@color/brand_red"
-            android:textSize="10sp"
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"

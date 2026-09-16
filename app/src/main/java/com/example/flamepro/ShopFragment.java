@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,8 +19,7 @@ import java.util.List;
 public class ShopFragment extends Fragment {
 
     private RecyclerView rvProducts;
-    private View cartIconLayout, notificationLayout;
-    private TextView tvCartBadge;
+    private View notificationLayout;
     private ImageView ivFilter;
     private View rootView;
 
@@ -37,13 +35,10 @@ public class ShopFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvProducts = view.findViewById(R.id.rvProducts);
-        cartIconLayout = view.findViewById(R.id.cartIconLayout);
         notificationLayout = view.findViewById(R.id.notificationLayout);
-        tvCartBadge = view.findViewById(R.id.tvCartBadge);
         ivFilter = view.findViewById(R.id.ivFilter);
 
         setupProducts();
-        setupCart();
         setupNotifications();
         setupFilter();
     }
@@ -73,21 +68,7 @@ public class ShopFragment extends Fragment {
         }
     }
 
-    private void setupCart() {
-        if (cartIconLayout != null) {
-            cartIconLayout.setOnClickListener(v -> getParentFragmentManager().beginTransaction()
-                    .replace(R.id.nav_host_fragment, new CartFragment())
-                    .addToBackStack(null)
-                    .commit());
-        }
 
-        if (tvCartBadge != null) {
-            CartManager.getInstance().addListener(totalItems -> {
-                tvCartBadge.setText(String.valueOf(totalItems));
-                tvCartBadge.setVisibility(totalItems > 0 ? View.VISIBLE : View.GONE);
-            });
-        }
-    }
 
     private void setupProducts() {
         List<Product> products = new ArrayList<>();

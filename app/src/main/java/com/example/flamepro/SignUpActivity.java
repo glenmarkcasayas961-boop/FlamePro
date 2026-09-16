@@ -73,18 +73,42 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void performSignUp() {
-        String email = etEmail.getText().toString().trim();
+        String input = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-        if (email.isEmpty()) {
-            etEmail.setError("Email required");
+        // 1. Basic Empty Check
+        if (input.isEmpty()) {
+            etEmail.setError("Email or Username required");
             etEmail.requestFocus();
             return;
         }
 
         if (password.isEmpty()) {
             etPassword.setError("Password required");
+            etPassword.requestFocus();
+            return;
+        }
+
+        // 2. Format Validation
+        if (input.contains("@")) {
+            // Strict Gmail check for testers
+            if (!(input.toLowerCase().endsWith("@gmail.com") && input.length() > 10)) {
+                etEmail.setError("Please use a valid Gmail address");
+                etEmail.requestFocus();
+                return;
+            }
+        } else {
+            // Username check
+            if (!(input.length() >= 3 && input.length() <= 15 && input.matches("^[a-zA-Z0-9_]*$"))) {
+                etEmail.setError("Username must be 3-15 characters (no spaces)");
+                etEmail.requestFocus();
+                return;
+            }
+        }
+
+        if (password.length() < 6) {
+            etPassword.setError("Password must be at least 6 characters");
             etPassword.requestFocus();
             return;
         }
@@ -101,7 +125,7 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        // Dummy registration success
+        // Simulated Success
         Toast.makeText(this, "Account Created Successfully", Toast.LENGTH_SHORT).show();
         
         Intent intent = new Intent(SignUpActivity.this, SetupProfileActivity.class);

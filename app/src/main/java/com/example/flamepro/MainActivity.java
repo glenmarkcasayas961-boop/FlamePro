@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Load default fragment
         if (savedInstanceState == null) {
-            loadFragment(new DashboardFragment());
+            String userName = getIntent().getStringExtra("USER_NAME");
+            loadFragment(DashboardFragment.newInstance(userName));
         }
     }
 
@@ -82,18 +83,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         BadgeDrawable badge = bottomNavigation.getOrCreateBadge(R.id.nav_cart);
-        badge.setVisible(true);
-        badge.setNumber(0);
         badge.setBackgroundColor(getColor(R.color.brand_red));
         badge.setBadgeTextColor(getColor(R.color.white));
 
-        CartManager.getInstance().addListener(badge::setNumber);
+        CartManager.getInstance().addListener(totalItems -> {
+            badge.setNumber(totalItems);
+            badge.setVisible(totalItems > 0);
+        });
 
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             Fragment fragment = null;
             if (itemId == R.id.nav_home) {
-                fragment = new DashboardFragment();
+                String userName = getIntent().getStringExtra("USER_NAME");
+                fragment = DashboardFragment.newInstance(userName);
             } else if (itemId == R.id.nav_shop) {
                 fragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {
@@ -110,18 +113,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupNavigationRail() {
         BadgeDrawable badge = navigationRail.getOrCreateBadge(R.id.nav_cart);
-        badge.setVisible(true);
-        badge.setNumber(0);
         badge.setBackgroundColor(getColor(R.color.brand_red));
         badge.setBadgeTextColor(getColor(R.color.white));
 
-        CartManager.getInstance().addListener(badge::setNumber);
+        CartManager.getInstance().addListener(totalItems -> {
+            badge.setNumber(totalItems);
+            badge.setVisible(totalItems > 0);
+        });
 
         navigationRail.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             Fragment fragment = null;
             if (itemId == R.id.nav_home) {
-                fragment = new DashboardFragment();
+                String userName = getIntent().getStringExtra("USER_NAME");
+                fragment = DashboardFragment.newInstance(userName);
             } else if (itemId == R.id.nav_shop) {
                 fragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {

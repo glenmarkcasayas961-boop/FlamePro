@@ -82,11 +82,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void performLogin() {
-        String email = etEmail.getText().toString().trim();
+        String input = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (email.isEmpty()) {
-            etEmail.setError("Email required");
+        // 1. Basic Empty Check
+        if (input.isEmpty()) {
+            etEmail.setError("Email or Username required");
             etEmail.requestFocus();
             return;
         }
@@ -97,10 +98,28 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Dummy login success
+        // 2. Format Validation
+        if (input.contains("@")) {
+            // Strict Gmail check for testers (e.g., glen@gmail.com)
+            if (!(input.toLowerCase().endsWith("@gmail.com") && input.length() > 10)) {
+                etEmail.setError("Please enter a valid Gmail address (e.g. glen@gmail.com)");
+                etEmail.requestFocus();
+                return;
+            }
+        } else {
+            // Username check (3-15 characters, no spaces or special symbols)
+            if (!(input.length() >= 3 && input.length() <= 15 && input.matches("^[a-zA-Z0-9_]*$"))) {
+                etEmail.setError("Invalid Username (3-15 characters, no spaces)");
+                etEmail.requestFocus();
+                return;
+            }
+        }
+
+        // 3. Simulated Login Success
+        // Now any valid Gmail (like glen@gmail.com) will work for your testing
         Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
-        
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("USER_NAME", input);
         startActivity(intent);
         finish();
     }

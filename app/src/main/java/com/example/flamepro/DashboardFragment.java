@@ -19,8 +19,25 @@ public class DashboardFragment extends Fragment {
 
     private RecyclerView rvShopRow1, rvShopRow2, rvServices;
     private AutoCompleteTextView actvBranch;
-    private View notificationLayout, cartIconLayout;
-    private TextView tvCartBadge, tvNotificationBadge;
+    private View notificationLayout;
+    private TextView tvNotificationBadge, tvUserName;
+    private String userName;
+
+    public static DashboardFragment newInstance(String name) {
+        DashboardFragment fragment = new DashboardFragment();
+        Bundle args = new Bundle();
+        args.putString("user_name", name);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            userName = getArguments().getString("user_name");
+        }
+    }
 
     @Nullable
     @Override
@@ -33,12 +50,12 @@ public class DashboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         initializeViews(view);
+        setupWelcome(userName);
         setupDropdowns();
         setupRecyclerViews();
         setupServicesRecyclerView();
         setupClickListeners();
         setupTabletStats(view);
-        setupCartBadge();
     }
 
     private void initializeViews(View view) {
@@ -47,9 +64,23 @@ public class DashboardFragment extends Fragment {
         rvServices = view.findViewById(R.id.rvServices);
         actvBranch = view.findViewById(R.id.actvBranch);
         notificationLayout = view.findViewById(R.id.notificationLayout);
-        cartIconLayout = view.findViewById(R.id.cartIconLayout);
-        tvCartBadge = view.findViewById(R.id.tvCartBadge);
         tvNotificationBadge = view.findViewById(R.id.tvNotificationBadge);
+        tvUserName = view.findViewById(R.id.tvUserName);
+    }
+
+    private void setupWelcome(String name) {
+        if (tvUserName == null) return;
+        
+        if (name != null && !name.isEmpty()) {
+            String displayName = name;
+            if (name.contains("@")) {
+                displayName = name.split("@")[0];
+            }
+            // Display with original casing (no forced caps)
+            tvUserName.setText(displayName);
+        } else {
+            tvUserName.setText("User");
+        }
     }
 
     private void setupServicesRecyclerView() {
@@ -71,24 +102,9 @@ public class DashboardFragment extends Fragment {
             notificationLayout.setOnClickListener(v -> 
                 Toast.makeText(getContext(), "You have new notifications!", Toast.LENGTH_SHORT).show());
         }
-        if (cartIconLayout != null) {
-            cartIconLayout.setOnClickListener(v -> {
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, new CartFragment())
-                        .addToBackStack(null)
-                        .commit();
-            });
-        }
     }
 
-    private void setupCartBadge() {
-        if (tvCartBadge != null) {
-            CartManager.getInstance().addListener(totalItems -> {
-                tvCartBadge.setText(String.valueOf(totalItems));
-                tvCartBadge.setVisibility(totalItems > 0 ? View.VISIBLE : View.GONE);
-            });
-        }
-    }
+
 
     private void setupDropdowns() {
         String[] branches = {getString(R.string.cebu), getString(R.string.bohol), getString(R.string.dumaguete)};
