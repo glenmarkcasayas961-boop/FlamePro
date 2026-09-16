@@ -119,13 +119,7 @@ public class ProductDetailsFragment extends Fragment {
         });
 
         btnBuyNow.setOnClickListener(v -> {
-            CartManager.getInstance().addProduct(product, quantity);
-            if (getParentFragmentManager() != null) {
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_fragment, new CartFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
+            CheckoutBottomSheet.newInstance(product).show(getParentFragmentManager(), "checkout");
         });
     }
 

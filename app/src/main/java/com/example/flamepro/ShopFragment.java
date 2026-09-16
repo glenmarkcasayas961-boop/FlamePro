@@ -108,10 +108,7 @@ public class ShopFragment extends Fragment {
             CartManager.getInstance().addProduct(product, 1);
             performCartAnimation(rootView.findViewById(R.id.flCartAnim));
         }, product -> {
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.nav_host_fragment, ProductDetailsFragment.newInstance(product))
-                    .addToBackStack(null)
-                    .commit();
+            CheckoutBottomSheet.newInstance(product).show(getParentFragmentManager(), "checkout");
         }, product -> {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.nav_host_fragment, ProductDetailsFragment.newInstance(product))
