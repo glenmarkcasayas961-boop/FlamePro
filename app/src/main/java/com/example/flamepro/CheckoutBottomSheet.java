@@ -14,7 +14,14 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+import java.util.TimeZone;
 
 public class CheckoutBottomSheet extends BottomSheetDialogFragment {
 
@@ -102,9 +109,28 @@ public class CheckoutBottomSheet extends BottomSheetDialogFragment {
         });
 
         view.findViewById(R.id.btnPlaceOrder).setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Order Placed Successfully!", Toast.LENGTH_LONG).show();
-            // Clear cart if needed, or just dismiss
-            dismiss();
+            String totalStr = tvTotal.getText().toString();
+            String estDelivery = OrderSuccessFragment.calculateDeliveryDateString();
+            
+            if (product != null) {
+                List<CartItem> orderedItems = new ArrayList<>();
+                orderedItems.add(new CartItem(product, quantity));
+                
+                TimeZone tz = TimeZone.getTimeZone("Asia/Manila");
+                Calendar cal = Calendar.getInstance(tz);
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.ENGLISH);
+                sdf.setTimeZone(tz);
+                String orderDateStr = sdf.format(cal.getTime());
+                
+                String orderId = "ORD - " + (4000 + new Random().nextInt(5000));
+                Order newOrder = new Order(orderId, orderedItems, orderDateStr, estDelivery, totalStr, Order.OrderStatus.PENDING);
+                OrderManager.getInstance().addOrder(newOrder);
+            }
+
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).loadFragment(OrderSuccessFragment.newInstance(totalStr, estDelivery));
+                dismiss();
+            }
         });
 
         // Toggle radio button on row click

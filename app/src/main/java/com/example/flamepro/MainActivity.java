@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {
                 fragment = new CartFragment();
+            } else if (itemId == R.id.nav_order) {
+                fragment = new MyOrdersFragment();
             }
             
             if (fragment != null) {
@@ -131,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {
                 fragment = new CartFragment();
+            } else if (itemId == R.id.nav_order) {
+                fragment = new MyOrdersFragment();
             }
             
             if (fragment != null) {
@@ -141,10 +145,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadFragment(Fragment fragment) {
+    public void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.nav_host_fragment, fragment)
+                .addToBackStack(null)
                 .commit();
         
         // Use post to ensure the fragment transaction is completed before checking visibility

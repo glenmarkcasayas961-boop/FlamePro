@@ -6,14 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+import java.util.TimeZone;
 
 public class CartFragment extends Fragment {
 
@@ -65,8 +70,37 @@ public class CartFragment extends Fragment {
 
         View btnCheckout = view.findViewById(R.id.btnCheckout);
         if (btnCheckout != null) {
-            btnCheckout.setOnClickListener(v -> 
-                Toast.makeText(getContext(), "Order placed successfully!", Toast.LENGTH_SHORT).show());
+            btnCheckout.setOnClickListener(v -> {
+                double total = CartManager.getInstance().getTotalPrice();
+                if (total <= 0) return;
+                
+                String totalStr = String.format(Locale.getDefault(), "₱ %.2f", total);
+                String estDelivery = OrderSuccessFragment.calculateDeliveryDateString();
+                
+                // Get selected items to save in order history
+                List<CartItem> orderedItems = new ArrayList<>();
+                for (CartItem item : CartManager.getInstance().getCartItems()) {
+                    if (item.isSelected()) {
+                        orderedItems.add(item);
+                    }
+                }
+                
+                if (!orderedItems.isEmpty()) {
+                    TimeZone tz = TimeZone.getTimeZone("Asia/Manila");
+                    Calendar cal = Calendar.getInstance(tz);
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.ENGLISH);
+                    sdf.setTimeZone(tz);
+                    String orderDateStr = sdf.format(cal.getTime());
+                    
+                    String orderId = "ORD - " + (4000 + new Random().nextInt(5000));
+                    Order newOrder = new Order(orderId, orderedItems, orderDateStr, estDelivery, totalStr, Order.OrderStatus.PENDING);
+                    OrderManager.getInstance().addOrder(newOrder);
+                }
+                
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).loadFragment(OrderSuccessFragment.newInstance(totalStr, estDelivery));
+                }
+            });
         }
 
         if (cbAll != null) {
