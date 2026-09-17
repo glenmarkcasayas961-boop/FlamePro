@@ -9,6 +9,7 @@ import android.os.Looper;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+@SuppressWarnings("ALL")
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
@@ -22,7 +23,8 @@ public class SplashActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // Removes SplashActivity from the back stack
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         }, 2500);
     }
 }

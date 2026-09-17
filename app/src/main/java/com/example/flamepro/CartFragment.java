@@ -136,7 +136,12 @@ public class CartFragment extends Fragment {
 
             @Override
             public void onRemoveItem(CartItem item) {
+                List<CartItem> cartItems = CartManager.getInstance().getCartItems();
+                int position = cartItems.indexOf(item);
                 CartManager.getInstance().removeProduct(item.getProduct());
+                if (position != -1) {
+                    adapter.removeItem(position);
+                }
                 updateUI();
             }
         });

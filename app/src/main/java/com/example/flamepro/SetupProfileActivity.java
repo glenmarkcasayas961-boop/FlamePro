@@ -1,24 +1,33 @@
 package com.example.flamepro;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.imageview.ShapeableImageView;
 
+import java.io.File;
+
 public class SetupProfileActivity extends AppCompatActivity {
 
     private ShapeableImageView ivProfileAvatar;
-    private ShapeableImageView ivCameraBadge;
     private EditText etFirstName;
     private EditText etLastName;
     private EditText etMiddleName;
@@ -28,12 +37,37 @@ public class SetupProfileActivity extends AppCompatActivity {
     private EditText etCity;
     private EditText etProvince;
     private Button btnSaveProfile;
+    private Uri selectedImageUri;
+    private Uri photoUri;
+
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+    private ActivityResultLauncher<Uri> takePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_setup_profile);
+
+        // Initialize Photo Picker
+        pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+            if (uri != null) {
+                selectedImageUri = uri;
+                ivProfileAvatar.setImageURI(uri);
+                ivProfileAvatar.setPadding(0, 0, 0, 0); // Remove padding if logo had it
+                ivProfileAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
+        });
+
+        // Initialize Camera Launcher
+        takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
+            if (success && photoUri != null) {
+                selectedImageUri = photoUri;
+                ivProfileAvatar.setImageURI(photoUri);
+                ivProfileAvatar.setPadding(0, 0, 0, 0);
+                ivProfileAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
+        });
 
         View scrollView = findViewById(R.id.setupProfileScrollView);
         ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, insets) -> {
@@ -57,11 +91,17 @@ public class SetupProfileActivity extends AppCompatActivity {
         etBarangay.setText(um.getBarangay());
         etCity.setText(um.getCity());
         etProvince.setText(um.getProvince());
+
+        if (um.getProfileImageUri() != null) {
+            selectedImageUri = Uri.parse(um.getProfileImageUri());
+            ivProfileAvatar.setImageURI(selectedImageUri);
+            ivProfileAvatar.setPadding(0, 0, 0, 0);
+            ivProfileAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
     }
 
     private void initializeViews() {
         ivProfileAvatar = findViewById(R.id.ivProfileAvatar);
-        ivCameraBadge = findViewById(R.id.ivCameraBadge);
         etFirstName = findViewById(R.id.etFirstName);
         etLastName = findViewById(R.id.etLastName);
         etMiddleName = findViewById(R.id.etMiddleName);
@@ -77,11 +117,10 @@ public class SetupProfileActivity extends AppCompatActivity {
         View.OnClickListener avatarListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SetupProfileActivity.this, "Upload Profile Picture", Toast.LENGTH_SHORT).show();
+                showImageSourceDialog();
             }
         };
         ivProfileAvatar.setOnClickListener(avatarListener);
-        ivCameraBadge.setOnClickListener(avatarListener);
 
         btnSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +128,34 @@ public class SetupProfileActivity extends AppCompatActivity {
                 saveProfileData();
             }
         });
+    }
+
+    private void showImageSourceDialog() {
+        String[] options = {"Take a Photo", "Choose from Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Update Profile Picture");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                // Take a Photo
+                photoUri = createImageUri();
+                if (photoUri != null) {
+                    takePicture.launch(photoUri);
+                }
+            } else if (which == 1) {
+                // Choose from Gallery
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+            } else {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private Uri createImageUri() {
+        File imageFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "profile_" + System.currentTimeMillis() + ".jpg");
+        return FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", imageFile);
     }
 
     private void saveProfileData() {
@@ -153,11 +220,22 @@ public class SetupProfileActivity extends AppCompatActivity {
         um.setCity(city);
         um.setProvince(province);
 
+        if (selectedImageUri != null) {
+            um.setProfileImageUri(selectedImageUri.toString());
+        }
+
         Toast.makeText(this, "Profile Saved Successfully", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(SetupProfileActivity.this, MainActivity.class);
         intent.putExtra("USER_NAME", um.getFullName());
         startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

@@ -133,6 +133,13 @@ public class SignUpActivity extends AppCompatActivity {
         
         Intent intent = new Intent(SignUpActivity.this, SetupProfileActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

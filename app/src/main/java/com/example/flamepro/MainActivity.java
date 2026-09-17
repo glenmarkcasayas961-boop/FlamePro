@@ -10,6 +10,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -108,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
             }
             
             if (fragment != null) {
-                loadFragment(fragment);
+                // Top level fragments don't add to backstack and use different animation
+                loadTopLevelFragment(fragment);
                 return true;
             }
             return false;
@@ -142,23 +145,54 @@ public class MainActivity extends AppCompatActivity {
             }
             
             if (fragment != null) {
-                loadFragment(fragment);
+                loadTopLevelFragment(fragment);
                 return true;
             }
             return false;
         });
     }
 
-    public void loadFragment(Fragment fragment) {
+    private void loadTopLevelFragment(Fragment fragment) {
+        // Clear backstack when switching top level tabs
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        
         getSupportFragmentManager()
                 .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .replace(R.id.nav_host_fragment, fragment)
-                .addToBackStack(null)
                 .commit();
+        
+        getWindow().getDecorView().post(this::updateCartNotificationVisibility);
+    }
+
+    public void loadFragment(Fragment fragment) {
+        loadFragment(fragment, false);
+    }
+
+    public void loadFragment(Fragment fragment, boolean addToBackStack) {
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in_right,
+                        R.anim.slide_out_left,
+                        R.anim.slide_in_left,
+                        R.anim.slide_out_right
+                )
+                .replace(R.id.nav_host_fragment, fragment);
+        
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
+        
+        transaction.commit();
         
         // Use post to ensure the fragment transaction is completed before checking visibility
         getWindow().getDecorView().post(this::updateCartNotificationVisibility);
     }
+
+    // Removed the problematic onBackPressed override, will use default activity behavior 
+    // which works well with FragmentManager's backstack when addToBackStack is used correctly.
+
 
     public void setBottomNavigationVisibility(int visibility) {
         if (bottomNavigation != null) {

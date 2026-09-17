@@ -102,7 +102,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         });
 
         holder.ivDelete.setOnClickListener(v -> {
-            listener.onRemoveItem(item);
+            int currentPos = holder.getBindingAdapterPosition();
+            if (listener != null && currentPos != RecyclerView.NO_POSITION) {
+                listener.onRemoveItem(items.get(currentPos));
+            }
         });
         
         // Hide shop header for every item except the first one in this simple implementation
@@ -118,6 +121,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public void updateItems(List<CartItem> newItems) {
         this.items = newItems;
         notifyDataSetChanged();
+    }
+
+    public void removeItem(int position) {
+        if (position >= 0 && position < items.size()) {
+            items.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, items.size());
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

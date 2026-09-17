@@ -39,20 +39,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivCameraBadge"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_camera"
-                android:background="@color/brand_subtitle_red"
-                android:tint="@color/white"
-                android:padding="6dp"
-                app:shapeAppearanceOverlay="@style/CircleImageView"
-                app:layout_constraintBottom_toBottomOf="@id/ivProfileAvatar"
-                app:layout_constraintEnd_toEndOf="@id/ivProfileAvatar"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="2dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

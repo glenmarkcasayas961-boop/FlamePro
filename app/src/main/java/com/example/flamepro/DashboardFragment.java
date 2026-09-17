@@ -123,11 +123,11 @@ public class DashboardFragment extends Fragment {
     private void setupRecyclerViews() {
         List<Product> products = getDummyProducts();
 
-        ExtinguisherAdapter.OnProductClickListener listener = product -> 
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.nav_host_fragment, ProductDetailsFragment.newInstance(product))
-                    .addToBackStack(null)
-                    .commit();
+        ExtinguisherAdapter.OnProductClickListener listener = product -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).loadFragment(ProductDetailsFragment.newInstance(product), true);
+            }
+        };
 
         ExtinguisherAdapter adapter1 = new ExtinguisherAdapter(products, listener);
         ExtinguisherAdapter adapter2 = new ExtinguisherAdapter(products, listener);

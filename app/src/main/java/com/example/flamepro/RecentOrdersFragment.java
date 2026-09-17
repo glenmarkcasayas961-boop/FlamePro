@@ -6,16 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecentOrdersFragment extends Fragment implements RecentOrdersAdapter.OnRecentOrderActionListener {
 
     private View flCartAnim;
+    private List<RecentOrderProduct> recentOrdersList;
+    private RecentOrdersAdapter adapter;
+    private TextView tvEmptyRecent;
+    private RecyclerView rvRecentOrders;
 
     @Nullable
     @Override
@@ -29,24 +36,48 @@ public class RecentOrdersFragment extends Fragment implements RecentOrdersAdapte
 
         view.findViewById(R.id.ivRecentBack).setOnClickListener(v -> getParentFragmentManager().popBackStack());
         flCartAnim = view.findViewById(R.id.flCartAnim);
-
-        RecyclerView rv = view.findViewById(R.id.rvRecentOrders);
+        tvEmptyRecent = view.findViewById(R.id.tvEmptyRecent);
         
-        List<RecentOrderProduct> sampleList = new ArrayList<>();
+        // Setup Delete All button
+        view.findViewById(R.id.btnDeleteAll).setOnClickListener(v -> showClearHistoryDialog());
+
+        rvRecentOrders = view.findViewById(R.id.rvRecentOrders);
         
-        // Define real products to enable add to cart functionality
-        Product p1 = new Product("HALO Smart Smoke Detector", "₱ 2,499.00", "", "", 4.8f, 100, R.drawable.ic_check_circle, null, "White", "Smart Sensor", "", null, "", true);
-        Product p2 = new Product("UGREEN PD 20W Fast Charger", "₱ 703.48", "", "", 4.7f, 50, R.drawable.ic_lightning, null, "White + 1M Cable", "Charger", "", null, "", true);
-        Product p3 = new Product("Industrial Safety Helmet", "₱ 980.00", "", "", 4.9f, 30, R.drawable.ic_fire_type, null, "Yellow", "PPE", "", null, "", true);
-        Product p4 = new Product("Heavy-Duty Rescue Rope", "₱ 2,150.00", "", "", 4.6f, 20, R.drawable.ic_coverage, null, "30m", "Safety Gear", "", null, "", true);
+        recentOrdersList = OrderManager.getInstance().getRecentOrders();
+        adapter = new RecentOrdersAdapter(recentOrdersList, this);
+        rvRecentOrders.setAdapter(adapter);
+        updateEmptyState();
+    }
 
-        sampleList.add(new RecentOrderProduct("HaloSafetyShop", "1:17 PM Delivered", p1));
-        sampleList.add(new RecentOrderProduct("UgreenOfficialShop", "1:17 PM Delivered", p2));
-        sampleList.add(new RecentOrderProduct("ArmorGuard Off", "Seller preparing package", p3));
-        sampleList.add(new RecentOrderProduct("ClimbSafe Gear", "In Transit", p4));
+    private void showClearHistoryDialog() {
+        if (getContext() == null || recentOrdersList.isEmpty()) {
+            if (recentOrdersList.isEmpty()) {
+                Toast.makeText(getContext(), "History is already empty", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
 
-        RecentOrdersAdapter adapter = new RecentOrdersAdapter(sampleList, this);
-        rv.setAdapter(adapter);
+        new AlertDialog.Builder(getContext())
+                .setTitle("Clear History")
+                .setMessage("Are you sure you want to delete all recent purchase history?")
+                .setPositiveButton("Delete All", (dialog, which) -> {
+                    OrderManager.getInstance().clearRecentOrders();
+                    adapter.notifyDataSetChanged();
+                    updateEmptyState();
+                    Toast.makeText(getContext(), "History cleared", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void updateEmptyState() {
+        if (recentOrdersList.isEmpty()) {
+            tvEmptyRecent.setVisibility(View.VISIBLE);
+            rvRecentOrders.setVisibility(View.GONE);
+        } else {
+            tvEmptyRecent.setVisibility(View.GONE);
+            rvRecentOrders.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -61,6 +92,24 @@ public class RecentOrdersFragment extends Fragment implements RecentOrdersAdapte
     public void onAddToCart(Product product) {
         CartManager.getInstance().addProduct(product, 1);
         performCartAnimation(flCartAnim);
+    }
+
+    @Override
+    public void onDeleteOrder(int position) {
+        if (getContext() == null) return;
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Remove Order")
+                .setMessage("Remove this item from your recent history?")
+                .setPositiveButton("Remove", (dialog, which) -> {
+                    OrderManager.getInstance().removeRecentOrder(position);
+                    adapter.notifyItemRemoved(position);
+                    adapter.notifyItemRangeChanged(position, adapter.getItemCount());
+                    updateEmptyState();
+                    Toast.makeText(getContext(), "Item removed", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void performCartAnimation(View animView) {

@@ -117,7 +117,7 @@ public class OrderSuccessFragment extends Fragment {
                 activity.setBottomNavigationVisibility(View.VISIBLE);
                 BottomNavigationView nav = activity.findViewById(R.id.bottomNavigation);
                 if (nav != null) {
-                    nav.setSelectedItemId(R.id.nav_home);
+                    nav.setSelectedItemId(R.id.nav_shop);
                 }
             }
         });

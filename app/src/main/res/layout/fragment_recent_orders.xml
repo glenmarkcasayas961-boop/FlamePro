@@ -36,6 +36,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btnDeleteAll"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="4dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/brand_subtitle_red"
+            android:contentDescription="Clear All History"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Scrollable content items layout list view -->
@@ -49,6 +63,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clRecentTopBar"
         tools:listitem="@layout/item_recent_order_card" />
+
+    <TextView
+        android:id="@+id/tvEmptyRecent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No recent purchase history"
+        android:textColor="@color/text_gray"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Cart Animation View -->
     <FrameLayout

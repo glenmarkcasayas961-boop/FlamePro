@@ -15,6 +15,7 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
     public interface OnRecentOrderActionListener {
         void onBuyAgain(Product product);
         void onAddToCart(Product product);
+        void onDeleteOrder(int position);
     }
 
     private List<RecentOrderProduct> items;
@@ -46,7 +47,7 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
     static class RecentViewHolder extends RecyclerView.ViewHolder {
         TextView tvShopName, tvSubStatusTitle, tvProductTitle, tvProductSubtitle, tvPrice, tvTotalPrice;
         ImageView ivProduct;
-        View btnAddToCart, btnBuyAgain, btnReview;
+        View btnAddToCart, btnBuyAgain, btnReview, btnDelete;
 
         public RecentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,6 +62,7 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
             btnAddToCart = itemView.findViewById(R.id.btnRecentAddToCartBubble);
             btnBuyAgain = itemView.findViewById(R.id.btnRecentBuyAgain);
             btnReview = itemView.findViewById(R.id.btnRecentWriteReview);
+            btnDelete = itemView.findViewById(R.id.btnRecentDelete);
         }
 
         public void bind(RecentOrderProduct model, OnRecentOrderActionListener listener) {
@@ -79,6 +81,13 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
 
             btnBuyAgain.setOnClickListener(v -> {
                 if (listener != null) listener.onBuyAgain(p);
+            });
+
+            btnDelete.setOnClickListener(v -> {
+                int currentPos = getBindingAdapterPosition();
+                if (listener != null && currentPos != RecyclerView.NO_POSITION) {
+                    listener.onDeleteOrder(currentPos);
+                }
             });
 
             btnReview.setOnClickListener(v -> 

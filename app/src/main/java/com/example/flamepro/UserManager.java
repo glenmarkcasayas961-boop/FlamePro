@@ -12,6 +12,7 @@ public class UserManager {
     private String barangay = "";
     private String city = "";
     private String province = "";
+    private String profileImageUri = null;
 
     private UserManager() {}
 
@@ -48,6 +49,9 @@ public class UserManager {
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getProfileImageUri() { return profileImageUri; }
+    public void setProfileImageUri(String profileImageUri) { this.profileImageUri = profileImageUri; }
 
     public String getFullName() {
         return firstName + " " + lastName;
