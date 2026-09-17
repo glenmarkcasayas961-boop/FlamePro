@@ -13,10 +13,16 @@ import java.util.List;
 
 public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapter.OrderViewHolder> {
 
-    private List<Order> orders;
+    public interface OnOrderCancelListener {
+        void onOrderCancelled(Order order);
+    }
 
-    public OrderHistoryAdapter(List<Order> orders) {
+    private List<Order> orders;
+    private OnOrderCancelListener cancelListener;
+
+    public OrderHistoryAdapter(List<Order> orders, OnOrderCancelListener cancelListener) {
         this.orders = orders;
+        this.cancelListener = cancelListener;
     }
 
     public void updateOrders(List<Order> newOrders) {
@@ -34,7 +40,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orders.get(position);
-        holder.bind(order);
+        holder.bind(order, cancelListener);
     }
 
     @Override
@@ -43,7 +49,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     }
 
     static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView tvOrderId, tvStatus, tvTitle, tvDate, tvEstDelivery, tvPrice;
+        TextView tvOrderId, tvStatus, tvTitle, tvDate, tvEstDelivery, tvPrice, btnCancelOrder;
         ImageView ivProduct;
 
         public OrderViewHolder(@NonNull View itemView) {
@@ -54,10 +60,11 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             tvDate = itemView.findViewById(R.id.tvOrderDate);
             tvEstDelivery = itemView.findViewById(R.id.tvItemEstDelivery);
             tvPrice = itemView.findViewById(R.id.tvOrderPrice);
+            btnCancelOrder = itemView.findViewById(R.id.btnCancelOrder);
             ivProduct = itemView.findViewById(R.id.ivProductImage);
         }
 
-        public void bind(Order order) {
+        public void bind(Order order, OnOrderCancelListener cancelListener) {
             tvOrderId.setText(order.getOrderId());
             tvDate.setText(order.getOrderDate());
             tvEstDelivery.setText(order.getEstDelivery());
@@ -71,6 +78,17 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             }
 
             setStatusBadge(order.getStatus());
+
+            if (order.getStatus() == Order.OrderStatus.PENDING) {
+                btnCancelOrder.setVisibility(View.VISIBLE);
+                btnCancelOrder.setOnClickListener(v -> {
+                    if (cancelListener != null) {
+                        cancelListener.onOrderCancelled(order);
+                    }
+                });
+            } else {
+                btnCancelOrder.setVisibility(View.GONE);
+            }
         }
 
         private void setStatusBadge(Order.OrderStatus status) {

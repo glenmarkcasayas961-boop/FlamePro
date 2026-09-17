@@ -128,6 +128,9 @@ public class SignUpActivity extends AppCompatActivity {
         // Simulated Success
         Toast.makeText(this, "Account Created Successfully", Toast.LENGTH_SHORT).show();
         
+        // Save the registered email/username to central state
+        UserManager.getInstance().setEmailOrUsername(input);
+        
         Intent intent = new Intent(SignUpActivity.this, SetupProfileActivity.class);
         startActivity(intent);
         finish();

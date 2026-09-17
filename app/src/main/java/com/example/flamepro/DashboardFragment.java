@@ -71,12 +71,14 @@ public class DashboardFragment extends Fragment {
     private void setupWelcome(String name) {
         if (tvUserName == null) return;
         
-        if (name != null && !name.isEmpty()) {
+        String currentName = UserManager.getInstance().getFirstName();
+        if (currentName != null && !currentName.isEmpty()) {
+            tvUserName.setText(currentName);
+        } else if (name != null && !name.isEmpty()) {
             String displayName = name;
             if (name.contains("@")) {
                 displayName = name.split("@")[0];
             }
-            // Display with original casing (no forced caps)
             tvUserName.setText(displayName);
         } else {
             tvUserName.setText("User");

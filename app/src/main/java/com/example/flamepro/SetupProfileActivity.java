@@ -43,7 +43,20 @@ public class SetupProfileActivity extends AppCompatActivity {
         });
 
         initializeViews();
+        preFillExistingData();
         setupClickListeners();
+    }
+
+    private void preFillExistingData() {
+        UserManager um = UserManager.getInstance();
+        etFirstName.setText(um.getFirstName());
+        etLastName.setText(um.getLastName());
+        etMiddleName.setText(um.getMiddleName());
+        etPhoneNumber.setText(um.getPhoneNumber());
+        etAddress.setText(um.getAddress());
+        etBarangay.setText(um.getBarangay());
+        etCity.setText(um.getCity());
+        etProvince.setText(um.getProvince());
     }
 
     private void initializeViews() {
@@ -129,9 +142,21 @@ public class SetupProfileActivity extends AppCompatActivity {
             return;
         }
 
+        // Save fields to central manager storage instance
+        UserManager um = UserManager.getInstance();
+        um.setFirstName(firstName);
+        um.setLastName(lastName);
+        um.setMiddleName(etMiddleName.getText().toString().trim());
+        um.setPhoneNumber(phoneNumber);
+        um.setAddress(address);
+        um.setBarangay(barangay);
+        um.setCity(city);
+        um.setProvince(province);
+
         Toast.makeText(this, "Profile Saved Successfully", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(SetupProfileActivity.this, MainActivity.class);
+        intent.putExtra("USER_NAME", um.getFullName());
         startActivity(intent);
         finish();
     }

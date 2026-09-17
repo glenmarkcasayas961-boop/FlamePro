@@ -118,6 +118,10 @@ public class LoginActivity extends AppCompatActivity {
         // 3. Simulated Login Success
         // Now any valid Gmail (like glen@gmail.com) will work for your testing
         Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
+        
+        // Record the login info to central UserManager for Profile display
+        UserManager.getInstance().setEmailOrUsername(input);
+        
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("USER_NAME", input);
         startActivity(intent);

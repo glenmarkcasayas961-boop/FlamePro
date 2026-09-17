@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new CartFragment();
             } else if (itemId == R.id.nav_order) {
                 fragment = new MyOrdersFragment();
+            } else if (itemId == R.id.nav_profile) {
+                fragment = new ProfileFragment();
             }
             
             if (fragment != null) {
@@ -135,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new CartFragment();
             } else if (itemId == R.id.nav_order) {
                 fragment = new MyOrdersFragment();
+            } else if (itemId == R.id.nav_profile) {
+                fragment = new ProfileFragment();
             }
             
             if (fragment != null) {

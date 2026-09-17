@@ -5,8 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
@@ -53,8 +56,38 @@ public class MyOrdersFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new OrderHistoryAdapter(OrderManager.getInstance().getOrders());
+        adapter = new OrderHistoryAdapter(OrderManager.getInstance().getOrders(), this::showCancellationDialog);
         rvOrders.setAdapter(adapter);
+    }
+
+    private void showCancellationDialog(Order order) {
+        String[] reasons = {
+            "Changed my mind",
+            "Ordered by mistake",
+            "Found a cheaper product",
+            "Delivery takes too long",
+            "Wrong item/quantity",
+            "Seller requested cancellation"
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Are you sure you want to cancel order?");
+        
+        // Single choice selection list for the optional reasons
+        builder.setSingleChoiceItems(reasons, -1, (dialog, which) -> {
+            // Reason selected (optional selection)
+        });
+
+        builder.setPositiveButton("Yes, Cancel", (dialog, which) -> {
+            order.setStatus(Order.OrderStatus.CANCELLED);
+            filterAndPopulateList();
+            Toast.makeText(getContext(), "Order cancelled successfully", Toast.LENGTH_SHORT).show();
+        });
+
+        builder.setNegativeButton("No, Keep Order", (dialog, which) -> dialog.dismiss());
+        
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void selectTab(TabFilter filter) {
