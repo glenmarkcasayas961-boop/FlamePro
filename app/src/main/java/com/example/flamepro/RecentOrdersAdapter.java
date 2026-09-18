@@ -18,7 +18,7 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
         void onDeleteOrder(int position);
     }
 
-    private final List<RecentOrderProduct> items;
+    private List<RecentOrderProduct> items;
     private final OnRecentOrderActionListener listener;
 
     public RecentOrdersAdapter(List<RecentOrderProduct> items, OnRecentOrderActionListener listener) {
@@ -44,8 +44,13 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
         return items.size();
     }
 
+    public void updateList(List<RecentOrderProduct> newList) {
+        this.items = newList;
+        notifyDataSetChanged();
+    }
+
     static class RecentViewHolder extends RecyclerView.ViewHolder {
-        TextView tvShopName, tvSubStatusTitle, tvProductTitle, tvProductSubtitle, tvPrice, tvTotalPrice;
+        TextView tvShopName, tvSubStatusTitle, tvProductTitle, tvProductSubtitle, tvPrice, tvTotalPrice, tvStatus;
         ImageView ivProduct;
         View btnAddToCart, btnBuyAgain, btnReview, btnDelete;
 
@@ -57,6 +62,7 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
             tvProductSubtitle = itemView.findViewById(R.id.tvRecentProductSubtitle);
             tvPrice = itemView.findViewById(R.id.tvRecentProductPrice);
             tvTotalPrice = itemView.findViewById(R.id.tvRecentTotalCalculatedPrice);
+            tvStatus = itemView.findViewById(R.id.tvRecentHeaderStatusText);
             ivProduct = itemView.findViewById(R.id.ivRecentProductImage);
             
             btnAddToCart = itemView.findViewById(R.id.btnRecentAddToCartBubble);
@@ -73,11 +79,14 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
             tvProductSubtitle.setText(p.getWeight() + " • " + p.getType());
             tvPrice.setText(p.getPrice());
             tvTotalPrice.setText(p.getPrice());
+            tvStatus.setText("Order completed");
             ivProduct.setImageResource(p.getImageResource());
 
-            btnAddToCart.setOnClickListener(v -> {
-                if (listener != null) listener.onAddToCart(p);
-            });
+            if (btnAddToCart != null) {
+                btnAddToCart.setOnClickListener(v -> {
+                    if (listener != null) listener.onAddToCart(p);
+                });
+            }
 
             btnBuyAgain.setOnClickListener(v -> {
                 if (listener != null) listener.onBuyAgain(p);

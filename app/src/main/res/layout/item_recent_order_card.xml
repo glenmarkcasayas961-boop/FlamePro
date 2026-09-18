@@ -285,7 +285,7 @@
                     android:id="@+id/btnRecentBuyAgain"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:backgroundTint="#FF4081"
+                    android:backgroundTint="@color/brand_red"
                     android:text="Buy again"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
