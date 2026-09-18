@@ -28,7 +28,7 @@ public class ShopFragment extends Fragment {
     private EditText etSearch;
     private View rootView;
     private ProductAdapter adapter;
-    private List<Product> allProductsList = new ArrayList<>();
+    private final List<Product> allProductsList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -169,16 +169,14 @@ public class ShopFragment extends Fragment {
                 .scaleY(1.2f)
                 .setDuration(400)
                 .setInterpolator(new OvershootInterpolator())
-                .withEndAction(() -> {
-                    animView.animate()
+                .withEndAction(() -> animView.animate()
                             .scaleX(1.8f)
                             .scaleY(1.8f)
                             .alpha(0f)
                             .setDuration(500)
                             .setInterpolator(new AccelerateInterpolator())
                             .withEndAction(() -> animView.setVisibility(View.GONE))
-                            .start();
-                })
+                            .start())
                 .start();
     }
 }

@@ -14,9 +14,9 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
     private List<Product> products;
-    private OnAddToCartClickListener addToCartListener;
-    private OnBuyNowClickListener buyNowListener;
-    private OnProductClickListener productClickListener;
+    private final OnAddToCartClickListener addToCartListener;
+    private final OnBuyNowClickListener buyNowListener;
+    private final OnProductClickListener productClickListener;
 
     public interface OnAddToCartClickListener {
         void onAddToCartClick(Product product);

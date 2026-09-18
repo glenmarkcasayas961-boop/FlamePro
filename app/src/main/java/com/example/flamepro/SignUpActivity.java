@@ -50,26 +50,11 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        btnCreateAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performSignUp();
-            }
-        });
+        btnCreateAccount.setOnClickListener(v -> performSignUp());
 
-        btnGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(SignUpActivity.this, "Google Sign Up Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnGoogle.setOnClickListener(v -> Toast.makeText(SignUpActivity.this, "Google Sign Up Clicked", Toast.LENGTH_SHORT).show());
 
-        btnFacebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(SignUpActivity.this, "Facebook Sign Up Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnFacebook.setOnClickListener(v -> Toast.makeText(SignUpActivity.this, "Facebook Sign Up Clicked", Toast.LENGTH_SHORT).show());
     }
 
     private void performSignUp() {

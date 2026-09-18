@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class DashboardFragment extends Fragment {
     private RecyclerView rvShopRow1, rvShopRow2, rvServices;
     private AutoCompleteTextView actvBranch;
     private View notificationLayout;
-    private TextView tvNotificationBadge, tvUserName;
+    private TextView tvUserName;
     private String userName;
 
     public static DashboardFragment newInstance(String name) {
@@ -64,7 +65,6 @@ public class DashboardFragment extends Fragment {
         rvServices = view.findViewById(R.id.rvServices);
         actvBranch = view.findViewById(R.id.actvBranch);
         notificationLayout = view.findViewById(R.id.notificationLayout);
-        tvNotificationBadge = view.findViewById(R.id.tvNotificationBadge);
         tvUserName = view.findViewById(R.id.tvUserName);
     }
 
@@ -93,7 +93,26 @@ public class DashboardFragment extends Fragment {
         services.add(new Service("Inspection", R.drawable.ic_check_circle));
         services.add(new Service("Delivery", R.drawable.ic_delivery));
 
-        ServiceAdapter adapter = new ServiceAdapter(services);
+        ServiceAdapter adapter = new ServiceAdapter(services, service -> {
+            if (getActivity() instanceof MainActivity) {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                BottomNavigationView nav = mainActivity.findViewById(R.id.bottomNavigation);
+                
+                String name = service.getName();
+                switch (name) {
+                    case "Delivery":
+                        if (nav != null) nav.setSelectedItemId(R.id.nav_order);
+                        mainActivity.loadTopLevelFragment(new MyOrdersFragment());
+                        break;
+                    default:
+                        // All other services go to Shop for now
+                        if (nav != null) nav.setSelectedItemId(R.id.nav_shop);
+                        mainActivity.loadTopLevelFragment(new ShopFragment());
+                        break;
+                }
+            }
+        });
+
         if (rvServices != null) {
             rvServices.setAdapter(adapter);
         }

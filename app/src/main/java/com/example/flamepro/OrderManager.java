@@ -1,13 +1,12 @@
 package com.example.flamepro;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class OrderManager {
     private static OrderManager instance;
-    private List<Order> orders;
-    private List<RecentOrderProduct> recentOrders;
+    private final List<Order> orders;
+    private final List<RecentOrderProduct> recentOrders;
 
     private OrderManager() {
         orders = new ArrayList<>();

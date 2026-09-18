@@ -125,16 +125,14 @@ public class RecentOrdersFragment extends Fragment implements RecentOrdersAdapte
                 .scaleY(1.2f)
                 .setDuration(400)
                 .setInterpolator(new OvershootInterpolator())
-                .withEndAction(() -> {
-                    animView.animate()
+                .withEndAction(() -> animView.animate()
                             .scaleX(1.8f)
                             .scaleY(1.8f)
                             .alpha(0f)
                             .setDuration(500)
                             .setInterpolator(new AccelerateInterpolator())
                             .withEndAction(() -> animView.setVisibility(View.GONE))
-                            .start();
-                })
+                            .start())
                 .start();
     }
 }

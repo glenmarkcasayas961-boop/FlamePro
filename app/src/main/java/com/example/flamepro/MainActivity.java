@@ -95,23 +95,24 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            Fragment fragment = null;
+            final Fragment selectedFragment;
             if (itemId == R.id.nav_home) {
                 String userName = getIntent().getStringExtra("USER_NAME");
-                fragment = DashboardFragment.newInstance(userName);
+                selectedFragment = DashboardFragment.newInstance(userName);
             } else if (itemId == R.id.nav_shop) {
-                fragment = new ShopFragment();
+                selectedFragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {
-                fragment = new CartFragment();
+                selectedFragment = new CartFragment();
             } else if (itemId == R.id.nav_order) {
-                fragment = new MyOrdersFragment();
+                selectedFragment = new MyOrdersFragment();
             } else if (itemId == R.id.nav_profile) {
-                fragment = new ProfileFragment();
+                selectedFragment = new ProfileFragment();
+            } else {
+                selectedFragment = null;
             }
             
-            if (fragment != null) {
-                // Top level fragments don't add to backstack and use different animation
-                loadTopLevelFragment(fragment);
+            if (selectedFragment != null) {
+                loadTopLevelFragment(selectedFragment);
                 return true;
             }
             return false;
@@ -130,29 +131,31 @@ public class MainActivity extends AppCompatActivity {
 
         navigationRail.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            Fragment fragment = null;
+            final Fragment selectedFragment;
             if (itemId == R.id.nav_home) {
                 String userName = getIntent().getStringExtra("USER_NAME");
-                fragment = DashboardFragment.newInstance(userName);
+                selectedFragment = DashboardFragment.newInstance(userName);
             } else if (itemId == R.id.nav_shop) {
-                fragment = new ShopFragment();
+                selectedFragment = new ShopFragment();
             } else if (itemId == R.id.nav_cart) {
-                fragment = new CartFragment();
+                selectedFragment = new CartFragment();
             } else if (itemId == R.id.nav_order) {
-                fragment = new MyOrdersFragment();
+                selectedFragment = new MyOrdersFragment();
             } else if (itemId == R.id.nav_profile) {
-                fragment = new ProfileFragment();
+                selectedFragment = new ProfileFragment();
+            } else {
+                selectedFragment = null;
             }
             
-            if (fragment != null) {
-                loadTopLevelFragment(fragment);
+            if (selectedFragment != null) {
+                loadTopLevelFragment(selectedFragment);
                 return true;
             }
             return false;
         });
     }
 
-    private void loadTopLevelFragment(Fragment fragment) {
+    public void loadTopLevelFragment(Fragment fragment) {
         // Clear backstack when switching top level tabs
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         

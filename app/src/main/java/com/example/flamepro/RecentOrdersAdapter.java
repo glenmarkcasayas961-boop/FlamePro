@@ -18,8 +18,8 @@ public class RecentOrdersAdapter extends RecyclerView.Adapter<RecentOrdersAdapte
         void onDeleteOrder(int position);
     }
 
-    private List<RecentOrderProduct> items;
-    private OnRecentOrderActionListener listener;
+    private final List<RecentOrderProduct> items;
+    private final OnRecentOrderActionListener listener;
 
     public RecentOrdersAdapter(List<RecentOrderProduct> items, OnRecentOrderActionListener listener) {
         this.items = items;

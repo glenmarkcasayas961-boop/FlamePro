@@ -114,20 +114,9 @@ public class SetupProfileActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        View.OnClickListener avatarListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImageSourceDialog();
-            }
-        };
-        ivProfileAvatar.setOnClickListener(avatarListener);
+        ivProfileAvatar.setOnClickListener(v -> showImageSourceDialog());
 
-        btnSaveProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveProfileData();
-            }
-        });
+        btnSaveProfile.setOnClickListener(v -> saveProfileData());
     }
 
     private void showImageSourceDialog() {

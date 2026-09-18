@@ -11,10 +11,16 @@ import java.util.List;
 
 public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHolder> {
 
-    private List<Service> services;
+    public interface OnServiceClickListener {
+        void onServiceClick(Service service);
+    }
 
-    public ServiceAdapter(List<Service> services) {
+    private List<Service> services;
+    private OnServiceClickListener listener;
+
+    public ServiceAdapter(List<Service> services, OnServiceClickListener listener) {
         this.services = services;
+        this.listener = listener;
     }
 
     @NonNull
@@ -29,6 +35,12 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
         Service service = services.get(position);
         holder.tvName.setText(service.getName());
         holder.ivIcon.setImageResource(service.getImageResource());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onServiceClick(service);
+            }
+        });
     }
 
     @Override

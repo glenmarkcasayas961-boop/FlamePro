@@ -88,10 +88,10 @@ public class ProfileFragment extends Fragment {
         TextView tvProfileEmail = view.findViewById(R.id.tvProfileEmail);
         ivAvatar = view.findViewById(R.id.ivAvatar);
 
-        if (tvOrdersCount != null) tvOrdersCount.setText(String.valueOf(totalOrdersCount));
-        if (tvDeliveryCount != null) tvDeliveryCount.setText(String.valueOf(shippedCount));
-        if (tvReceiveCount != null) tvReceiveCount.setText(String.valueOf(deliveredCount));
-        if (tvCancelledCount != null) tvCancelledCount.setText(String.valueOf(cancelledCount));
+        if (tvOrdersCount != null) tvOrdersCount.setText("" + totalOrdersCount);
+        if (tvDeliveryCount != null) tvDeliveryCount.setText("" + shippedCount);
+        if (tvReceiveCount != null) tvReceiveCount.setText("" + deliveredCount);
+        if (tvCancelledCount != null) tvCancelledCount.setText("" + cancelledCount);
         
         UserManager um = UserManager.getInstance();
         if (tvProfileName != null) tvProfileName.setText(um.getFullName());
@@ -102,9 +102,7 @@ public class ProfileFragment extends Fragment {
             ivAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
 
-        View.OnClickListener updatePhotoListener = v -> {
-            showImageSourceDialog();
-        };
+        View.OnClickListener updatePhotoListener = v -> showImageSourceDialog();
 
         if (ivAvatar != null) ivAvatar.setOnClickListener(updatePhotoListener);
 
